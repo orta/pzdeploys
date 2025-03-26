@@ -3,8 +3,11 @@
 
 import { contextBridge, ipcRenderer } from 'electron';
 
-contextBridge.exposeInMainWorld('secureAPI', {
-  storeCredentials: (data: { renderApiPassword: string; vercelApiKey: string; }) =>
-    ipcRenderer.invoke('store-credentials', data),
-  getCredentials: () => ipcRenderer.invoke('get-credentials')
+contextBridge.exposeInMainWorld('electronAPI', {
+  storeCredentials: (credentials: {
+    renderApiPassword: string,
+    vercelApiKey: string,
+    vercelTeamId: string
+  }) => ipcRenderer.invoke('store-credentials', credentials),
+  getCredentials: () => ipcRenderer.invoke('get-credentials'),
 });

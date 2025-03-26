@@ -4,10 +4,14 @@ import keytar from 'keytar';
 
 async function getVercelCredentials() {
   const apiKey = await keytar.getPassword('pzdeploys', 'vercelApiKey');
+  const teamId = await keytar.getPassword('pzdeploys', 'vercelTeamId');
   if (!apiKey) {
     throw new Error('Vercel API key not found in keytar');
   }
-  return { apiKey };
+  if (!teamId) {
+    throw new Error('Vercel Team ID not found in keytar');
+  }
+  return { apiKey, teamId };
 }
 
 export class VercelPoller {
@@ -34,10 +38,8 @@ export class VercelPoller {
     try {
       const vercel = new Vercel({ bearerToken: credentials.apiKey });
       const deployments = await vercel.deployments.getDeployments({
-        teamId: "team_yJBkLONrYF2hdLVbgH6Wuqs5",
-        // projectId: "prj_8Engdho4kuEkkpzPEJlRXnlymnIK",
+        teamId: credentials.teamId,
         state: 'BUILDING',
-        // since: oneHourAgo.getTime(),
       });
 
       const activeDeployments = deployments.deployments.filter(deploy => {
