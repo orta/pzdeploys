@@ -17,15 +17,41 @@ if (require('electron-squirrel-startup')) {
 let tray: Tray | null = null;
 
 const renderPoller = new RenderPoller();
-renderPoller.start()
+renderPoller.setCallback((deploys) => {
+  if (!tray) return;
 
+  const menuTemplate: Electron.MenuItemConstructorOptions[] = deploys.length === 0 
+    ? [{ label: 'No active deploys', enabled: false }]
+    : deploys.map(deploy => ({
+        label: `Deploy ${deploy.id}`,
+        submenu: [
+          { 
+            label: 'View Details',
+            click: () => {
+              // TODO: Add URL when we have it
+              // shell.openExternal(deploy.url)
+            }
+          }
+        ]
+      }));
+
+  // Add a separator and quit option at the bottom
+  menuTemplate.push(
+    { type: 'separator' },
+    { label: 'Quit', click: () => app.quit() }
+  );
+
+  const contextMenu = Menu.buildFromTemplate(menuTemplate);
+  tray.setContextMenu(contextMenu);
+});
+renderPoller.start();
 
 const createTray = (): void => {
   const iconPath = path.join(__dirname, 'assets/icon.png'); 
   tray = new Tray(iconPath);
   
   const contextMenu = Menu.buildFromTemplate([
-    { label: 'please wait', enabled: false }
+    { label: '...', enabled: false }
   ]);
   
   tray.setToolTip('pzdeploys');

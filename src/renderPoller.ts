@@ -14,11 +14,19 @@ async function getRenderCredentials() {
 export class RenderPoller {
   private interval: number;
   private timerId: NodeJS.Timeout | null = null;
+  private onPollCallback?: (services: any[]) => void;
 
   constructor(intervalSeconds: number = 5) { // default poll every 30 seconds
     this.interval = intervalSeconds * 1000;
   }
 
+  /**
+   * Sets a callback function to be called after each successful poll
+   * @param callback Function to be called with the filtered services
+   */
+  public setCallback(callback: (services: any[]) => void): void {
+    this.onPollCallback = callback;
+  }
 
   /**
    * Polls the Render API for services that are currently deploying.
@@ -43,6 +51,8 @@ export class RenderPoller {
         return lastUpdated.getTime() > now.getTime() - 1000 * 60 * 60 * 1;
       });
 
+      const allDeploys: any[] = []
+
       if (worthLookingAt.length > 0) {
         console.log('Deploying services:');
         for (const service of worthLookingAt) {
@@ -52,16 +62,22 @@ export class RenderPoller {
             limit: '20',
             status: 'build_in_progress',
           });
-          if(details.length === 0) console.log("   No live deploys")
+          if (details.length === 0) console.log("   No live deploys")
           else {
             console.log("   Live deploys:")
             for (const deploy of details) {
               console.log(`    - ${deploy.id}`)
             }
+            allDeploys.push(...details)
           }
         }
+
       } else {
         console.log('No services are currently deploying.');
+      }
+      // Call the callback with the filtered services if it exists
+      if (this.onPollCallback) {
+        this.onPollCallback(allDeploys);
       }
     } catch (error) {
       console.error('Error during poll:', error);
