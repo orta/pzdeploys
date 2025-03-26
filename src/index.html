@@ -2,11 +2,22 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>Hello World!</title>
-
+    <title>API Credentials</title>
   </head>
   <body>
-    <h1>💖 Hello World!</h1>
-    <p>Welcome to your Electron application.</p>
+    <h1>Set Up Your Credentials</h1>
+    <form id="credentials-form">
+      <div>
+        <label for="render-password">Render.com API Password:</label>
+        <input type="password" id="render-password" required />
+      </div>
+      <div>
+        <label for="vercel-api-key">Vercel API Key:</label>
+        <input type="password" id="vercel-api-key" required />
+      </div>
+      <button type="submit">Save Credentials</button>
+    </form>
+    <div id="message"></div>
+    <script src="./renderer.js"></script>
   </body>
 </html>
