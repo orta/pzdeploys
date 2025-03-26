@@ -1,6 +1,5 @@
 import './index.css';
 
-console.log('👋 This message is being logged by "renderer.js", included via webpack');
 
 document.addEventListener('DOMContentLoaded', async () => {
   const form = document.getElementById('credentials-form');
@@ -15,6 +14,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (credentials.vercelApiKey) {
       (document.getElementById('vercel-api-key') as HTMLInputElement).value = credentials.vercelApiKey;
     }
+    if (credentials.vercelTeamId) {
+      (document.getElementById('vercel-team-id') as HTMLInputElement).value = credentials.vercelTeamId;
+    }
   } catch (error) {
     console.error('Error fetching credentials:', error);
   }
@@ -24,12 +26,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       e.preventDefault();
       const renderInput = document.getElementById('render-password') as HTMLInputElement;
       const vercelInput = document.getElementById('vercel-api-key') as HTMLInputElement;
+      const vercelTeamIdInput = document.getElementById('vercel-team-id') as HTMLInputElement;
       const renderApiPassword = renderInput.value;
       const vercelApiKey = vercelInput.value;
+      const vercelTeamId = vercelTeamIdInput.value;
 
       try {
         // Call the secure API exposed by the preload script
-        const result = await (window as any).secureAPI.storeCredentials({ renderApiPassword, vercelApiKey });
+        const result = await (window as any).secureAPI.storeCredentials({ renderApiPassword, vercelApiKey, vercelTeamId });
         if (result) {
           messageElem.textContent = 'Credentials saved successfully!';
         } else {

@@ -128,7 +128,6 @@ const createTray = (): void => {
   
   tray.setToolTip('pzdeploys');
   tray.setContextMenu(contextMenu);
-  // Optional: when clicking the tray icon, show the context menu.
   tray.on('click', () => {
     tray?.popUpContextMenu();
   });
@@ -148,7 +147,7 @@ const createWindow = (): void => {
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools({ mode: 'detach' });
 };
 
 ipcMain.handle('store-credentials', async (event, data) => {
