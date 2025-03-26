@@ -1,4 +1,4 @@
-import { getServices, renderGet } from '@llimllib/renderapi';
+import { getServices, renderGet, Service } from '@llimllib/renderapi';
 import keytar from 'keytar';
 
 async function getRenderCredentials() {
@@ -24,7 +24,7 @@ export class RenderPoller {
    * Sets a callback function to be called after each successful poll
    * @param callback Function to be called with the filtered services
    */
-  public setCallback(callback: (services: any[]) => void): void {
+  public setCallback(callback: (services: { service: Service, deploy: RenderDeploy["deploy"] }[]) => void): void {
     this.onPollCallback = callback;
   }
 
@@ -51,14 +51,14 @@ export class RenderPoller {
         return lastUpdated.getTime() > now.getTime() - 1000 * 60 * 60 * 1;
       });
 
-      const allDeploys: any[] = []
+      const allDeploys: { service: Service, deploy: RenderDeploy["deploy"] }[] = []
 
       if (worthLookingAt.length > 0) {
         console.log('Deploying services:');
         for (const service of worthLookingAt) {
 
           console.log(`- Recently changed service: ${service.id}`);
-          const details = await renderGet<any[]>(credentials.apiPass, `services/${service.id}/deploys`, {
+          const details = await renderGet<RenderDeploy[]>(credentials.apiPass, `services/${service.id}/deploys`, {
             limit: '20',
             status: 'build_in_progress',
           });
@@ -66,9 +66,9 @@ export class RenderPoller {
           else {
             console.log("   Live deploys:")
             for (const deploy of details) {
-              console.log(`    - ${deploy.id}`)
+              console.log(`    - ${JSON.stringify(deploy) }`)
+              allDeploys.push({ service, deploy: deploy.deploy })
             }
-            allDeploys.push(...details)
           }
         }
 
@@ -106,4 +106,25 @@ export class RenderPoller {
       console.log('RenderPoller stopped.');
     }
   }
+}
+
+export interface RenderDeploy {
+  deploy: Deploy;
+  cursor: string;
+}
+
+export interface Deploy {
+  id:         string;
+  commit:     Commit;
+  status:     string;
+  trigger:    string;
+  createdAt:  Date;
+  updatedAt:  Date;
+  finishedAt: null;
+}
+
+export interface Commit {
+  id:        string;
+  message:   string;
+  createdAt: Date;
 }

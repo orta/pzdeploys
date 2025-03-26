@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, Tray, Menu } from 'electron';
+import { app, BrowserWindow, ipcMain, Tray, Menu, shell } from 'electron';
 import keytar from 'keytar';
 import path from 'path';
 import { RenderPoller } from './renderPoller';
@@ -17,19 +17,18 @@ if (require('electron-squirrel-startup')) {
 let tray: Tray | null = null;
 
 const renderPoller = new RenderPoller();
-renderPoller.setCallback((deploys) => {
+renderPoller.setCallback((info) => {
   if (!tray) return;
 
-  const menuTemplate: Electron.MenuItemConstructorOptions[] = deploys.length === 0 
+  const menuTemplate: Electron.MenuItemConstructorOptions[] = info.length === 0 
     ? [{ label: 'No active deploys', enabled: false }]
-    : deploys.map(deploy => ({
-        label: `Deploy ${deploy.id}`,
+    : info.map(deploy => ({
+        label: `${deploy.service.name} - ${deploy.deploy.commit.message}`,
         submenu: [
           { 
             label: 'View Details',
             click: () => {
-              // TODO: Add URL when we have it
-              // shell.openExternal(deploy.url)
+              shell.openExternal(`https://dashboard.render.com/web/${deploy.service.id}/deploys/${deploy.deploy.id}`)
             }
           }
         ]
@@ -43,6 +42,9 @@ renderPoller.setCallback((deploys) => {
 
   const contextMenu = Menu.buildFromTemplate(menuTemplate);
   tray.setContextMenu(contextMenu);
+
+  const hasDeploys = info.length > 0;
+  tray.setImage(path.join(__dirname, hasDeploys ? 'assets/uploading.png' : 'assets/icon.png'));
 });
 renderPoller.start();
 
