@@ -73,7 +73,7 @@ function updateTrayMenu(renderDeploys: { service: Service, deploy: RenderDeploy[
           {
             label: 'Open in GitHub',
             click: () => {
-              shell.openExternal(`https://github.com/${deploy.meta.githubCommitOrg}/${deploy.meta.githubCommitRepo}/commit/${deploy.githubCommitSha}`);
+              shell.openExternal(`https://github.com/${deploy.meta.githubCommitOrg}/${deploy.meta.githubCommitRepo}/commit/${deploy.meta.githubCommitSha}`);
             }
           }
         ]
