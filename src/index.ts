@@ -97,7 +97,7 @@ function updateTrayMenu(renderDeploys: { service: Service, deploy: RenderDeploy[
 
   // Update icon if there are any deploys from either service
   const hasActiveDeploys = renderDeploys.length > 0 || vercelDeploys.length > 0;
-  tray.setImage(path.join(__dirname, hasActiveDeploys ? 'assets/uploading.png' : 'assets/icon.png'));
+  tray.setImage(path.join(__dirname, hasActiveDeploys ? 'assets/uploadingTemplate.png' : 'assets/iconTemplate.png'));
 }
 
 // Keep track of latest deploys from both services
@@ -119,7 +119,7 @@ renderPoller.start();
 vercelPoller.start();
 
 const createTray = (): void => {
-  const iconPath = path.join(__dirname, 'assets/icon.png'); 
+  const iconPath = path.join(__dirname, 'assets/iconTemplate.png'); 
   tray = new Tray(iconPath);
   
   const contextMenu = Menu.buildFromTemplate([
