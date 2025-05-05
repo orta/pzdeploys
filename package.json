@@ -16,6 +16,9 @@
     "name": "Orta Therox",
     "email": "git@orta.io"
   },
+  "engines": {
+    "node": ">=18.x"
+  },
   "license": "MIT",
   "devDependencies": {
     "@electron-forge/cli": "^7.8.0",
