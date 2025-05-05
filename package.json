@@ -1,9 +1,9 @@
 {
-  "name": "pzdeploys",
-  "productName": "pzdeploys",
-  "version": "0.0.2",
+  "name": "pzdeploys2",
+  "productName": "pzdeploys2",
+  "version": "0.0.1",
   "description": "My Electron application description",
-  "main": ".webpack/main",
+  "main": ".vite/build/main.js",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
@@ -25,29 +25,23 @@
     "@electron-forge/maker-zip": "^7.8.0",
     "@electron-forge/plugin-auto-unpack-natives": "^7.8.0",
     "@electron-forge/plugin-fuses": "^7.8.0",
-    "@electron-forge/plugin-webpack": "^7.8.0",
+    "@electron-forge/plugin-vite": "^7.8.0",
     "@electron/fuses": "^1.8.0",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
-    "@vercel/webpack-asset-relocator-loader": "1.7.2",
-    "copy-webpack-plugin": "^13.0.0",
-    "css-loader": "^6.11.0",
-    "electron": "35.0.3",
+    "electron": "36.1.0",
+    "electron-rebuild": "^3.2.9",
     "eslint": "^8.57.1",
     "eslint-plugin-import": "^2.31.0",
-    "fork-ts-checker-webpack-plugin": "^7.3.0",
-    "node-loader": "^2.1.0",
-    "style-loader": "^3.3.4",
-    "ts-loader": "^9.5.2",
     "ts-node": "^10.9.2",
-    "typescript": "~4.5.4"
+    "typescript": "~4.5.4",
+    "vite": "^6.3.4"
   },
   "dependencies": {
-    "@llimllib/renderapi": "^3.3.0",
-    "@types/keytar": "^4.4.2",
-    "@vercel/sdk": "^1.5.0",
     "electron-squirrel-startup": "^1.0.1",
+    "@llimllib/renderapi": "^3.3.0",
+    "@vercel/sdk": "^1.5.0",
     "zod": "^3.24.2"
   },
-  "packageManager": "yarn@1.22.21+sha1.1959a18351b811cdeedbd484a8f86c3cc3bbaf72"
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

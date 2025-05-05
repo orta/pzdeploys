@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>PZ Deploys</title>
+
+  </head>
+  <body>
+    <h1>Set Up Your Credentials</h1>
+    <form id="credentials-form">
+      <div>
+        <label for="render-password">Render API Key:</label>
+        <input type="password" id="render-password" required />
+      </div>
+      <div>
+        <label for="vercel-api-key">Vercel API Key:</label>
+        <input type="password" id="vercel-api-key" required />
+      </div>
+      <div>
+        <label for="vercel-team-id">Vercel Team ID:</label>
+        <input type="text" id="vercel-team-id" required  />
+      </div>
+      <button type="submit">Save Credentials</button>
+    </form>
+    <div id="message"></div>
+
+    <script type="module" src="/src/renderer.ts"></script>
+    
+    <script>
+      document.getElementById('credentials-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const renderApiPassword = document.getElementById('render-password').value;
+        const vercelApiKey = document.getElementById('vercel-api-key').value;
+        const vercelTeamId = document.getElementById('vercel-team-id').value;
+  
+        try {
+          await window.electronAPI.storeCredentials({
+            renderApiPassword,
+            vercelApiKey,
+            vercelTeamId
+          });
+          alert('Credentials saved successfully!');
+        } catch (error) {
+          alert('Error saving credentials');
+          console.error(error);
+        }
+      });
+  
+      // Load saved credentials
+      window.addEventListener('DOMContentLoaded', async () => {
+        const credentials = await window.electronAPI.getCredentials();
+        if (credentials.renderApiPassword) {
+          document.getElementById('render-password').value = credentials.renderApiPassword;
+        }
+        if (credentials.vercelApiKey) {
+          document.getElementById('vercel-api-key').value = credentials.vercelApiKey;
+        }
+        if (credentials.vercelTeamId) {
+          document.getElementById('vercel-team-id').value = credentials.vercelTeamId;
+        }
+      });
+      </script>
+  </body>
+</html>

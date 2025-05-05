@@ -1,15 +1,24 @@
 import { Vercel } from '@vercel/sdk';
 import { Deployments } from '@vercel/sdk/esm/sdk/deployments';
-import keytar from 'keytar';
+import { retrieveEncryptedData } from './main';
+import { safeStorage } from 'electron';
 
 async function getVercelCredentials() {
-  const apiKey = await keytar.getPassword('pzdeploys', 'vercelApiKey');
-  const teamId = await keytar.getPassword('pzdeploys', 'vercelTeamId');
+  const encryptedApiKey = await retrieveEncryptedData('vercelApiKey');
+  const encryptedTeamId = await retrieveEncryptedData('vercelTeamId');
+
+  if (!safeStorage.isEncryptionAvailable()) {
+      throw new Error('Encryption is not available on this system.');
+  }
+
+  const apiKey = encryptedApiKey ? safeStorage.decryptString(encryptedApiKey) : null;
+  const teamId = encryptedTeamId ? safeStorage.decryptString(encryptedTeamId) : null;
+
   if (!apiKey) {
-    throw new Error('Vercel API key not found in keytar');
+    throw new Error('Vercel API key not found or could not be decrypted');
   }
   if (!teamId) {
-    throw new Error('Vercel Team ID not found in keytar');
+    throw new Error('Vercel Team ID not found or could not be decrypted');
   }
   return { apiKey, teamId };
 }

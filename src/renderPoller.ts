@@ -1,14 +1,23 @@
 import { getServices, renderGet, Service } from '@llimllib/renderapi';
-import keytar from 'keytar';
+import { retrieveEncryptedData } from './main'; // Import helper
+import { safeStorage } from 'electron'; // Import safeStorage
 
 async function getRenderCredentials() {
-  // Retrieve the username stored in keytar for the render service
-  const apiPass = await keytar.getPassword('pzdeploys', 'renderApiPassword');
+  // Retrieve encrypted data using the helper from main.ts
+  const encryptedApiPass = await retrieveEncryptedData('renderApiPassword');
+
+  if (!safeStorage.isEncryptionAvailable()) {
+    throw new Error('Encryption is not available on this system.');
+  }
+
+  // Decrypt the data
+  const apiPass = encryptedApiPass ? safeStorage.decryptString(encryptedApiPass) : null;
+
   if (!apiPass) {
-    throw new Error('Render username not found in keytar');
+    throw new Error('Render API password not found or could not be decrypted');
   }
   
-  return {  apiPass };
+  return { apiPass };
 }
 
 export class RenderPoller {
@@ -16,7 +25,7 @@ export class RenderPoller {
   private timerId: NodeJS.Timeout | null = null;
   private onPollCallback?: (services: any[]) => void;
 
-  constructor(intervalSeconds: number = 5) { // default poll every 30 seconds
+  constructor(intervalSeconds = 30) { // default poll every 30 seconds
     this.interval = intervalSeconds * 1000;
   }
 
